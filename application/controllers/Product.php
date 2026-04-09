@@ -11,7 +11,9 @@ class Product extends CI_Controller{
     public function index(){
         $data['products'] = $this->Product_model->getAllProducts();
         $data['title'] = 'Product List';
+        $this->load->view('templates/header', $data);
         $this->load->view('products/index', $data);
+        $this->load->view('templates/footer');
     }
 
     public function create(){

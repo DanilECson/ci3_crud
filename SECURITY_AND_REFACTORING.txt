@@ -1,0 +1,76 @@
+Security & Refactoring checklist
+================================
+
+This file lists security issues and professional improvements to address in this CodeIgniter 3 project.
+
+High-priority security fixes
+----------------------------
+- Enable CSRF protection
+  - Set `$config['csrf_protection'] = TRUE;` in `application/config/config.php` and ensure forms include the CSRF token (use `form_open()` or echo the CSRF hidden input).
+
+- Remove plaintext password fallback
+  - `User_model::verifyPassword()` currently falls back to checking plaintext equality. Remove the fallback and rely only on `password_verify()`.
+
+- Centralize password hashing
+  - Move `password_hash()` usage into the model (not controllers). Ensure `password_hash()` and `password_verify()` are used consistently.
+
+- Regenerate session on login
+  - Call `$this->session->sess_regenerate(TRUE);` after successful authentication to prevent session fixation.
+
+- Set an encryption key
+  - Configure `$config['encryption_key']` in `application/config/config.php` with a strong random value.
+
+- Harden session & cookie settings
+  - Set `sess_save_path` to a secure, writable path (or use database sessions).
+  - Use `cookie_secure = TRUE` when serving over HTTPS.
+  - Set `cookie_httponly = TRUE`.
+  - Consider `sess_driver = 'database'` for production; add session table and required schema.
+
+Medium-priority security & correctness
+-------------------------------------
+- Input validation and form rules
+  - Use `form_validation` library with explicit rules for all inputs (email format, password length, required fields, sanitization).
+
+- Use parameterized queries via Query Builder
+  - Continue using CI's Query Builder (safe), avoid concatenating SQL strings.
+
+- Avoid global XSS reliance
+  - Do not enable `global_xss_filtering`. Instead validate and escape outputs with `htmlspecialchars()` or CI's `form_prep()` where appropriate.
+
+- CSRF + AJAX
+  - If using AJAX, ensure your JS picks up and sends the CSRF token on POST requests.
+
+Refactoring & professional practices
+----------------------------------
+- Move business logic out of controllers
+  - Create services or libraries for authentication, user management, and product operations.
+
+- Use `form_open()`/`form_close()` helpers
+  - They make CSRF integration easier and keep forms consistent.
+
+- Improve password policy
+  - Enforce minimum length (e.g., 8+), require complexity or use strength meter; consider supporting password reset via tokenized email.
+
+- Remove duplicate logic
+  - The project now contains module copies; after MX is installed, remove duplicates in `application/controllers` (or keep them as bridges during migration).
+
+- Add logging and error handling
+  - Return friendly errors to users and log details to server logs. Increase `log_threshold` appropriately for staging.
+
+- Add tests
+  - Add unit/integration tests for critical flows: authentication, product CRUD, API endpoints.
+
+- Use transactions for multi-step DB ops
+  - Wrap user creation and other multi-statement processes in transactions to avoid partial state on failure.
+
+Operational & deployment
+------------------------
+- Set `base_url` in `application/config/config.php` explicitly.
+- Serve the site over HTTPS and configure webserver to include security headers.
+- Keep dependencies and PHP updated; run security scanners periodically.
+
+Notes / Quick priorities
+-----------------------
+1. Set encryption key, enable CSRF, and stop plaintext password fallback.
+2. Regenerate session on login and set secure cookies.
+3. Add `form_validation` rules and move hashing into the model.

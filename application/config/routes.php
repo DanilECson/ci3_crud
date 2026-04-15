@@ -49,15 +49,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'Pages/login';
-$route['login'] = 'Pages/login';
-$route['signup'] = 'Pages/signup';
-$route['register'] = 'Pages/register';
-$route['dashboard'] = 'Pages/dashboard';
-$route['profile'] = 'Pages/profile';
-$route['profile/update'] = 'Pages/updateProfile';
-$route['logout'] = 'Pages/logout';
-$route['authenticate'] = 'Pages/authenticate';
-$route['product'] = 'Product/index';
+$route['default_controller'] = 'auth/login';
+$route['login'] = 'auth/login';
+$route['signup'] = 'auth/signup';
+$route['register'] = 'auth/register';
+$route['logout'] = 'auth/logout';
+
+$route['dashboard'] = 'dashboard/index'; // index() is the standard default controller method
+$route['profile'] = 'dashboard/profile';
+$route['profile/update'] = 'dashboard/updateProfile';
+
+$route['products'] = 'product/index'; // list products view
+$route['product/create'] = 'product/create'; // create action uses POST
+$route['product/update'] = 'product/update'; // update action uses POST with hidden id field
+$route['product/delete'] = 'product/delete'; // delete action uses POST with hidden id field
+
+$route['api/products'] = 'api/products/index';
+$route['api/products/(:num)'] = 'api/products/show/$1';
+$route['api/products/create'] = 'api/products/create';
+$route['api/products/update/(:num)'] = 'api/products/update/$1';
+$route['api/products/delete/(:num)'] = 'api/products/delete/$1';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+?>

@@ -12,7 +12,7 @@ class Product extends CI_Controller{
         $data['products'] = $this->Product_model->getAllProducts();
         $data['title'] = 'Product List';
         $this->load->view('templates/header', $data);
-        $this->load->view('products/index', $data);
+        $this->load->view('product/index', $data);
         $this->load->view('templates/footer');
     }
 
